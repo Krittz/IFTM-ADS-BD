@@ -278,22 +278,59 @@ INSERT INTO telefone_cliente VALUES
   
 -- ----------QUESTÃO 01----------
 -- #A
-	SELECT * FROM agencia WHERE cod_banco = 3;
+SELECT * FROM agencia WHERE cod_banco = 3;
     
 -- #B 
-	SELECT endereco, numero_agencia FROM agencia WHERE cod_banco <> 3 || cod_banco <>2;
+SELECT endereco, numero_agencia FROM agencia WHERE cod_banco <> 3 || cod_banco <>2;
 
 -- #C 
 SELECT num_conta, saldo  FROM conta where num_agencia in(
 	SELECT numero_agencia FROM agencia WHERE cod_banco in (
-		SELECT codigo FROM banco WHERE nome LIKE '%Banco do Brasil%'));
+		SELECT codigo FROM banco WHERE nome LIKE '%Banco do Brasil%'
+	)
+);
     
 -- #D 
 SELECT * FROM cliente WHERE cpf in(
 	SELECT cliente_cpf FROM conta WHERE num_agencia in(
 		SELECT numero_agencia FROM agencia WHERE cod_banco in (
-			SELECT codigo FROM banco WHERE nome like '%Nubank%')));
+			SELECT codigo FROM banco WHERE nome like '%Nubank%'
+		)
+	)
+);
 -- #E
 SELECT nome, sexo FROM cliente WHERE cpf in(
 	SELECT cliente_cpf FROM conta WHERE saldo > 6000);
+    
+-- #F 
+SELECT cliente_cpf, saldo  FROM conta WHERE saldo < (
+	SELECT AVG(saldo) FROM conta);
 
+-- #G 
+SELECT * FROM movimentacao WHERE num_conta IN(
+	SELECT num_conta FROM conta WHERE num_agencia IN(
+		SELECT numero_agencia FROM agencia WHERE (endereco LIKE '%Major Gote%') && (cod_banco in(
+			SELECT codigo FROM banco WHERE nome LIKE '%Banco do Brasil%'
+			)
+		)
+	)
+) ORDER BY data ASC;
+
+-- #H
+SELECT * FROM telefone_cliente WHERE cpf_cli in(
+    SELECT cpf FROM cliente where sexo LIKE '%F' && cpf IN(
+		SELECT cliente_cpf FROM conta WHERE num_agencia IN(
+			SELECT numero_agencia FROM agencia WHERE cod_banco IN(
+				SELECT codigo FROM banco WHERE nome LIKE '%Santander%'
+			)
+		)
+	)
+);
+
+-- #I 
+SELECT endereco, numero_agencia, codigo FROM agencia, banco WHERE agencia.cod_banco = banco.codigo;
+     -- FONTE :  IFTM - ADS - BD2 - Aula 4 - Junções, Ordenação, Agregações, Agrupamentos e Limites
+		-- Canal Prof. Dênis Lima  
+			-- https://www.youtube.com/channel/UCxYSKV3VEF3x2uG6kSD9U3Q
+        
+    
